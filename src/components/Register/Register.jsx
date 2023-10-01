@@ -1,11 +1,23 @@
-import React from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
+import auth from "../../firebase_config";
 
 const Register = () => {
+  const [userInfo,setUserInfo]=useState({})
     const handleRegister=(e)=>{
          e.preventDefault();
         const email=e.target.email.value;
         const password=e.target.password.value;
         // console.log(email,password);
+        createUserWithEmailAndPassword(auth,email,password)
+        .then(result=>{
+          const user=result.user;
+          console.log(user);
+          setUserInfo(user)
+        })
+        .catch(error=>{
+          console.log(error.message);
+        })
 
 
     }
@@ -43,8 +55,9 @@ const Register = () => {
             data-ripple-light="true"
             value="Register"
           />
+         {userInfo && <p>{userInfo.email}</p>}
 
-          <p className="mt-4 block text-center font-sans text-base font-normal leading-relaxed text-gray-700 antialiased">
+          {/* <p className="mt-4 block text-center font-sans text-base font-normal leading-relaxed text-gray-700 antialiased">
             Already have an account?
             <a
               className="font-medium text-pink-500 transition-colors hover:text-blue-700"
@@ -52,7 +65,7 @@ const Register = () => {
             >
               Sign In
             </a>
-          </p>
+          </p> */}
         </form>
       </div>
     </div>
