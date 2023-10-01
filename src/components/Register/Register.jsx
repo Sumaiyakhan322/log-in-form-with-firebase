@@ -11,6 +11,7 @@ const Register = () => {
          e.preventDefault();
         const email=e.target.email.value;
         const password=e.target.password.value;
+        const accepted=e.target.terms.checked;//true/false
         // console.log(email,password);
 
         setRegisterError('')
@@ -24,6 +25,10 @@ const Register = () => {
         else if(!/[A-Z]/.test(password)){
           setRegisterError('Should have upper case')
           return
+        }
+        else if(!accepted){
+          setRegisterError('please accept the terms and condition')
+          return;
         }
        
         createUserWithEmailAndPassword(auth,email,password)
@@ -62,7 +67,7 @@ const Register = () => {
                 type={showpassword ? "text" :"password"}
                  name="password"
                 className="peer h-full w-full rounded-md border inline border-blue-gray-200 border-t-transparent bg-transparent px-3 py-3 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-              required/><button onClick={()=>setShowpassword(!showpassword)}>
+              required/><button onClick={()=>setShowpassword(!showpassword)} className="absolute top-3 right-2">
                 {
                   showpassword ? <FaEyeSlash> </FaEyeSlash> :<FaEye></FaEye>
                 }
@@ -72,6 +77,10 @@ const Register = () => {
               </label>
               
             </div>
+          </div>
+          <div>
+            <input type="checkbox" name="terms" id="terms" />
+            <label htmlFor="terms">Accept our terms and condition</label>
           </div>
 
           <input
