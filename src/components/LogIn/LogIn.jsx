@@ -1,24 +1,47 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useState } from 'react';
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useRef, useState } from 'react';
 import auth from '../../firebase_config';
+import { Link } from 'react-router-dom';
 
 const LogIn = () => {
   const [registerError,setRegisterError]=useState('')
   const [success,setSuccess]=useState('')
+  const emailref=useRef(null)
   const handleLogin=(e)=>{
      e.preventDefault();
      const email=e.target.email.value;
      const password=e.target.password.value;
      console.log(email,password);
+     setRegisterError('')
+     setSuccess('')
      signInWithEmailAndPassword(auth,email,password)
      .then (result=>{
-      console.log(result.user);
+      // console.log(result.user);
       setSuccess('User log in successfully')
      })
      .catch(error=>{
-      console.log(error.message);
+      // console.log(error.message);
       setRegisterError(error.message)
      })
+  }
+
+  const handleForgetPassword=()=>{
+     const email=emailref.current.value;
+       if(!email){
+        alert('please add the email');
+        return
+       }
+       else if(! /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)){
+        alert('Give a validate email');
+        return
+       }
+       sendPasswordResetEmail(auth,email)
+       .then(()=>{
+       alert('Chack your email');
+       })
+       .catch(error=>{
+       alert(error.message);
+       })
   }
     return (
         <div >
@@ -33,7 +56,7 @@ const LogIn = () => {
     <div className="mb-4 flex flex-col gap-6">
       
       <div className="relative h-11 w-full min-w-[200px]">
-        <input  name="email" type='email'
+        <input  name="email" type='email' ref={emailref}
           className="peer h-full w-full rounded-md border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-3 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
          
         />
@@ -78,6 +101,7 @@ const LogIn = () => {
       </label>
       
     </div>
+    <button onClick={handleForgetPassword}>Forget password</button>
     <button
       className="mt-6 block w-full select-none rounded-lg bg-pink-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
       type="submit"
@@ -85,10 +109,11 @@ const LogIn = () => {
     >
       Log in
     </button>
-           <p>Forget password</p>
+          
   </form>
 </div>
 <p>{registerError ? <p>{registerError}</p> : <p>{success}</p>}</p>
+<p>New to this website Please <Link to='/register'>Register Now/Sign up</Link></p>
         </div>
        
     );
