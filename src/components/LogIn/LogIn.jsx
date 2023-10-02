@@ -1,4 +1,4 @@
-import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useRef, useState } from 'react';
 import auth from '../../firebase_config';
 import { Link } from 'react-router-dom';
@@ -17,7 +17,16 @@ const LogIn = () => {
      signInWithEmailAndPassword(auth,email,password)
      .then (result=>{
       // console.log(result.user);
-      setSuccess('User log in successfully')
+      if(result.user.emailVerified){
+        setSuccess('User log in successfully')
+      }
+      else{
+        sendEmailVerification(result.user)
+        .then(()=>{
+          alert('please check your email')
+        })
+      }
+     
      })
      .catch(error=>{
       // console.log(error.message);
